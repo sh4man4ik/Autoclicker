@@ -11,7 +11,15 @@ project ("Autoclicker")
 
 add_executable (Autoclicker "Autoclicker.cpp")
 
+find_package(nlohmann_json)
+target_link_libraries(Autoclicker PRIVATE nlohmann_json::nlohmann_json)
+
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Autoclicker PROPERTY CXX_STANDARD 20)
 endif()
 
+add_custom_command(TARGET Autoclicker POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different
+		${CMAKE_SOURCE_DIR}/settings.json
+		$<TARGET_FILE_DIR:Autoclicker>
+)
