@@ -2,5 +2,6 @@
 	"start_key_left": "L",
 	"start_key_right": "R",
 	"stop_key": "S",
+	"exit_key": "E",
 	"clicks_per_second": 5
 }

@@ -26,20 +26,29 @@ void click(bool& canLeftClick, bool& canRightClick)
 	SendInput(2, inputs, sizeof(INPUT));
 }
 
-void autoclicker(char& startLeftKey, char& startRightKey, char& stopKey, bool& canLeftClick, bool& canRightClick, double& clickInterval)
+void autoclicker(char& startLeftKey, char& startRightKey, char& stopKey, char& exitKey, bool& canLeftClick, bool& canRightClick, double& clickInterval)
 {
 	while (true)
 	{
+		if (GetAsyncKeyState(exitKey) & 0x8000)
+		{
+			std::cout << "" << std::endl;
+			std::cout << "Autoclicker closed" << std::endl;
+			std::exit(0);
+		}
+
 		if (GetAsyncKeyState(startLeftKey) & 0x8000 && !canLeftClick && !canRightClick)
 		{
 			std::cout << "Clicking started" << std::endl;
 			canLeftClick = true;
+			Sleep(100);
 		}
 
 		if (GetAsyncKeyState(startRightKey) & 0x8000 && !canRightClick && !canLeftClick)
 		{
 			std::cout << "Clicking started" << std::endl;
 			canRightClick = true;
+			Sleep(100);
 		}
 
 		if (canLeftClick || canRightClick)
@@ -50,11 +59,19 @@ void autoclicker(char& startLeftKey, char& startRightKey, char& stopKey, bool& c
 			{
 				Sleep(10);
 
+				if (GetAsyncKeyState(exitKey) & 0x8000)
+				{
+					std::cout << "" << std::endl;
+					std::cout << "Autoclicker closed" << std::endl;
+					std::exit(0);
+				}
+
 				if (GetAsyncKeyState(stopKey) & 0x8000)
 				{
 					std::cout << "Clicking stopped" << std::endl;
 					canLeftClick = false;
 					canRightClick = false;
+					Sleep(100);
 					break;
 				}
 			}
@@ -66,7 +83,7 @@ void autoclicker(char& startLeftKey, char& startRightKey, char& stopKey, bool& c
 	}
 }
 
-void displayStartText(char& startLeftKey, char& startRightKey, char& stopKey, double& clicksPerSecond)
+void displayStartText(char& startLeftKey, char& startRightKey, char& stopKey, char& exitKey, double& clicksPerSecond)
 {
 	std::cout << "Mouse autoclicker launched successfully" << std::endl;
 	std::cout << "" << std::endl;
@@ -74,11 +91,12 @@ void displayStartText(char& startLeftKey, char& startRightKey, char& stopKey, do
 	std::cout << "Start Left Key: " << startLeftKey << std::endl;
 	std::cout << "Start Right Key: " << startRightKey << std::endl;
 	std::cout << "Stop Key: " << stopKey << std::endl;
+	std::cout << "Exit Key: " << exitKey << std::endl;
 	std::cout << "Clicks Per Second: " << clicksPerSecond << std::endl;
 	std::cout << "" << std::endl;
 }
 
-void setKeys(char& startLeftKey, char& startRightKey, char& stopKey, double& clicksPerSecond, json& data)
+void setKeys(char& startLeftKey, char& startRightKey, char& stopKey, char& exitKey, double& clicksPerSecond, json& data)
 {
 	try
 	{
@@ -90,6 +108,9 @@ void setKeys(char& startLeftKey, char& startRightKey, char& stopKey, double& cli
 
 		std::string stopKeyString = data.value("stop_key", "S");
 		stopKey = stopKeyString[0];
+
+		std::string exitKeyString = data.value("exit_key", "E");
+		exitKey = exitKeyString[0];
 
 		clicksPerSecond = data.value("clicks_per_second", 1);
 		if (clicksPerSecond <= 0)
@@ -144,15 +165,16 @@ int main()
 	char startKeyLeft;
 	char startKeyRight;
 	char stopKey;
+	char exitKey;
 	double clicksPerSecond;
 	double clickInterval;
 
 	try
 	{
-		setKeys(startKeyLeft, startKeyRight, stopKey, clicksPerSecond, data);
+		setKeys(startKeyLeft, startKeyRight, stopKey, exitKey, clicksPerSecond, data);
 		clickInterval = 1000 / clicksPerSecond;
-		displayStartText(startKeyLeft, startKeyRight, stopKey, clicksPerSecond);
-		autoclicker(startKeyLeft, startKeyRight, stopKey, canLeftClick, canRightClick, clickInterval);
+		displayStartText(startKeyLeft, startKeyRight, stopKey, exitKey, clicksPerSecond);
+		autoclicker(startKeyLeft, startKeyRight, stopKey, exitKey, canLeftClick, canRightClick, clickInterval);
 	}
 	catch (const std::exception& e)
 	{
