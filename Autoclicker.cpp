@@ -68,7 +68,7 @@ void autoclicker(char& startLeftKey, char& startRightKey, char& stopKey, bool& c
 
 void displayStartText(char& startLeftKey, char& startRightKey, char& stopKey, double& clicksPerSecond)
 {
-	std::cout << "Autoclicker launched successfully" << std::endl;
+	std::cout << "Mouse autoclicker launched successfully" << std::endl;
 	std::cout << "" << std::endl;
 	std::cout << "Autoclicker settings:" << std::endl;
 	std::cout << "Start Left Key: " << startLeftKey << std::endl;
