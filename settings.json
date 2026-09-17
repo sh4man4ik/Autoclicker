@@ -1,5 +1,6 @@
 {
-	"start_key": "B",
+	"start_key_left": "L",
+	"start_key_right": "R",
 	"stop_key": "S",
 	"clicks_per_second": 5
 }
